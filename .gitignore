@@ -4,3 +4,4 @@ node_modules/
 *.log
 node_modules/package-lock.json
 .DS_Store
+upf_backend/db.sqlite3
