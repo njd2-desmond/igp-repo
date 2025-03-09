@@ -94,7 +94,14 @@ export default function Home() {
             <p><strong>Ingredients:</strong> {productData.ingredients_text || "Not available"}</p>
             <p><strong>Nutrition Grade:</strong> {productData.nutrition_grades || "Not available"}</p>
             <p><strong>NOVA Score:</strong> {productData.nova_group} - {getNovaDescription(productData.nova_group)}</p>  {/* ✅ Add NOVA score */}
-          </div>
+          
+          {/* Refresh Button */}
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700">
+            Scan Again
+          </button>
+        </div>
         ) : (
           <p>No product scanned yet</p>
         )}
