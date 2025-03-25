@@ -6,3 +6,4 @@ node_modules/package-lock.json
 .DS_Store
 upf_backend/db.sqlite3
 venv/
+upf_backend/chatbot/.env
