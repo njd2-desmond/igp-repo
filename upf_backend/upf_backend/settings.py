@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "corsheaders",  # new
     # Our custom apps
     "foodlookup",  # Our barcode lookup app
+    "users", # added new app; users; to keep track of users
+    "chatbot", # Added the chatbot app for integration into Django & FastAPI
 ]
 
 
