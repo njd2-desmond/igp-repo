@@ -41,9 +41,9 @@ def check_food(barcode: str):
 def chatbot(user_query: dict = Body(...)):
     """Chatbot endpoint using Gemini AI"""
     try:
-        model = genai.GenerativeModel("gemini-pro")  # ✅ Use Gemini Pro model
+        model = genai.GenerativeModel("gemini-pro")  # Use Gemini Pro model
         response = model.generate_content(user_query["user_query"])
 
-        return {"response": response.text.strip()}  # ✅ Format response correctly
+        return {"response": response.text.strip()}  # Format response correctly
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
