@@ -7,6 +7,13 @@
 - Jordan Edgecombe
 - Collins Madubuchi
 
+Test Barcodes
+Whole Milk 5000436338840 (Nova 1)
+Ketchup 50457243 (Nova 3)
+Harissa Paste 5010338301316 (Nova 4)
+Steak Mince 0000027536223
+Honey 5011273044757
+
 
 -- NOTE {} Denotes a code chunk
 

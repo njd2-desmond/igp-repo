@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import Quagga from "@ericblade/quagga2";
 import Image from "next/image";
 import upfLogo from "../public/upf-unwrapped-logo2.png";
+import upfIngredients from '../pages/upf-ingredients';
+import { searchIngredients } from '../pages/lookup.js'
 
 export default function Home() {
   const videoRef = useRef(null);
@@ -10,6 +12,8 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [isScanning, setIsScanning] = useState(true); // New: tracks if camera should be visible; changing so that the camera switches off once scan is loaded since this is distracting
   const [manualBarcode, setManualBarcode] = useState(""); // New: State for manual barcode input
+  const [foundIngredients, setFoundIngredients] = useState([]); // state to store found ingredients
+
 
   const getNovaDescription = (novaGroup) => { // changed to an object lookup, since this is faster, doesn't require if statements, and prevents errors by automatically catching unexpected values
     const descriptions = {
@@ -31,6 +35,14 @@ export default function Home() {
       if (data.status === 1) {
         setProductData(data.product);
         setErrorMessage(null); // Reset any previous error messages
+
+        if (data.product.ingredients_text) {
+          const foundIngredients = searchIngredients(data.product.ingredients_text);
+          console.log("Found UPF Ingredients:", foundIngredients)
+          setFoundIngredients(foundIngredients);
+        } else {
+          console.warn("No ingredients available")
+        }
       } else {
         setErrorMessage("⚠️ Product not found in database.");
 
@@ -86,7 +98,7 @@ export default function Home() {
           // Prevent duplicate scans by disabling detection temporarily
           Quagga.stop(); // stop scanner when product is detected
         } else {
-          console.warn("⚠️ Unsupported barcode length:", barcode.length);
+          console.warn("Unsupported barcode length:", barcode.length);
         }
       });
 
@@ -115,7 +127,7 @@ export default function Home() {
   // : new
   // new:
   const handleManualBarcodeCheck = () => {
-    if (manualBarcode.length ===8 || manualBarcode.length === 12 | manualBarcode.length === 13) {
+    if (manualBarcode.length ===8 || manualBarcode.length === 12 || manualBarcode.length === 13) {
       setScannedBarcode(manualBarcode);
       fetchProductData(manualBarcode);
     } else {
@@ -141,19 +153,36 @@ export default function Home() {
         <div id="product-info" className="mt-4 p-4 bg-white rounded-lg shadow-lg w-full max-w-md">
           {productData ? (
             <div>
-              <h3 className="text-xl font-bold">{productData.product_name || "Unknown"}</h3>
-              <p><strong>Brand:</strong> {productData.brands || "Unknown"}</p>
-              <p><strong>Ingredients:</strong> {productData.ingredients_text || "Not available"}</p>
+              <h3 className="text-xl font-bold">{productData.product_name || "Unknown Product Name"}</h3>
+              <p><strong>{productData.brands || "Unknown Brand"}</strong> </p>
+              <p><strong>Contains</strong> {productData.ingredients_text || "Not available"}</p>
               <p><strong>Nutrition Grade:</strong> {productData.nutrition_grades || "Not available"}</p>
-              <p><strong>NOVA Score:</strong> {productData.nova_group} - {getNovaDescription(productData.nova_group)}</p>  {/* ✅ Add NOVA score */}
+              <p><strong>NOVA Score:</strong> {productData.nova_group} - {getNovaDescription(productData.nova_group)}</p>
               {/* Adding a section that pulls in the product image if available */}
-              {productData.image_url && <img src={productData.image_url} alt={productData.product_name} className="mt-2 w-40" />}
+              
+              {/* Displaying Risks for Found Ingredients */}
+              <div>
+              {foundIngredients.length > 0 ? (
+                foundIngredients.map((ingredient, index) => (
+                  <div key={index}>
+                    <p><strong>{ingredient.example}</strong> ({ingredient.category})</p>
+                    <p>{ingredient.description}</p>
+                    <p>{ingredient.risks}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No at-risk ingredients found.</p>
+              )}
             </div>
+            {productData.image_url && <img src={productData.image_url} alt={productData.product_name} className="mt-2 w-40" />}
+            </div>
+            
           ) : errorMessage ? (
             <p className="text-red-500">{errorMessage}</p>
           ) : (
             <p>No product scanned yet.</p>
           )}
+
         </div>
       )}
 
