@@ -1,4 +1,4 @@
-import upfIngredients from '../pages/upf-ingredients.js'; // loads dictionary from different file
+import upfIngredients from './riskDictionary.js'; // loads dictionary from different file
 
 export function searchIngredients(inputStr) {
     const input = inputStr.toLowerCase();

@@ -2,8 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import Quagga from "@ericblade/quagga2";
 import Image from "next/image";
 import upfLogo from "../public/upf-unwrapped-logo2.png";
-import upfIngredients from '../pages/upf-ingredients';
-import { searchIngredients } from '../pages/lookup.js'
+import upfIngredients from './riskDictionary.js';
+import { searchIngredients } from './riskLookup.js';
+import { getNovaDescription } from './getNovaDescription.js';
+import { fetchProductData } from '../pages/fetchProductData.js';
+import BarcodeControls from '../pages/controlComponents.js';
+import ProductDetails from '../pages/productDetails.js';
 
 export default function Home() {
   const videoRef = useRef(null);
@@ -14,51 +18,15 @@ export default function Home() {
   const [manualBarcode, setManualBarcode] = useState(""); // New: State for manual barcode input
   const [foundIngredients, setFoundIngredients] = useState([]); // state to store found ingredients
 
-
-  const getNovaDescription = (novaGroup) => { // changed to an object lookup, since this is faster, doesn't require if statements, and prevents errors by automatically catching unexpected values
-    const descriptions = {
-      1: "Unprocessed / Minimally Processed",
-      2: "Processed Culinary Ingredients",
-      3: "Processed Foods",
-      4: "Ultra-Processed Foods (UPFs)",
-    };
-    return descriptions[novaGroup] || "Not available";
+  const handleFetchProductData = (barcode) => {
+    fetchProductData(
+      barcode,
+      setProductData,
+      setErrorMessage,
+      setFoundIngredients,
+      setIsScanning
+    );
   };
-
-  // new:
-  const fetchProductData = async (barcode) => {
-    try {
-      setIsScanning(false); // Hide scanner when product is found
-      const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
-      const data = await response.json();
-
-      if (data.status === 1) {
-        setProductData(data.product);
-        setErrorMessage(null); // Reset any previous error messages
-
-        if (data.product.ingredients_text) {
-          const foundIngredients = searchIngredients(data.product.ingredients_text);
-          console.log("Found UPF Ingredients:", foundIngredients)
-          setFoundIngredients(foundIngredients);
-        } else {
-          console.warn("No ingredients available")
-        }
-      } else {
-        setErrorMessage("⚠️ Product not found in database.");
-
-        // New: Restarts the scanner automatically if the product isn't found so there is no need to press rescan
-        setTimeout(() => setIsScanning(true), 1000);
-      }
-    } catch (error) {
-      console.error("Error fetching product data:", error);
-      setProductData(null);
-      setErrorMessage("⚠️ Network error. Please try again.");
-
-      // Restart scanner if network error
-      setTimeout(() => Quagga.start(), 500);
-    }
-  };
-  // :new 
 
   useEffect(() => {
     if (typeof window !== "undefined" && videoRef.current) {
@@ -93,7 +61,8 @@ export default function Home() {
         if ([8, 12, 13].includes(barcode.length)) {
           console.log("Barcode detected:", barcode);
           setScannedBarcode(barcode);
-          fetchProductData(barcode);
+          //fetchProductData(barcode);
+          handleFetchProductData(barcode);
 
           // Prevent duplicate scans by disabling detection temporarily
           Quagga.stop(); // stop scanner when product is detected
@@ -127,9 +96,10 @@ export default function Home() {
   // : new
   // new:
   const handleManualBarcodeCheck = () => {
-    if (manualBarcode.length ===8 || manualBarcode.length === 12 || manualBarcode.length === 13) {
+    if (manualBarcode.length === 8 || manualBarcode.length === 12 || manualBarcode.length === 13) {
       setScannedBarcode(manualBarcode);
-      fetchProductData(manualBarcode);
+      //fetchProductData(manualBarcode);
+      handleFetchProductData(manualBarcode)
     } else {
       setErrorMessage("Please enter a valid 8, 12, or 13-digit barcode.");
     }
@@ -149,71 +119,20 @@ export default function Home() {
           <div ref={videoRef} id="barcode-scanner" className="w-full h-64 bg-gray-200 rounded-lg"></div>
         </div>
       ) : (
-        // show product info instead of the scanner
-        <div id="product-info" className="mt-4 p-4 bg-white rounded-lg shadow-lg w-full max-w-md">
-          {productData ? (
-            <div>
-              <h3 className="text-xl font-bold">{productData.product_name || "Unknown Product Name"}</h3>
-              <p><strong>{productData.brands || "Unknown Brand"}</strong> </p>
-              <p><strong>Contains</strong> {productData.ingredients_text || "Not available"}</p>
-              <p><strong>Nutrition Grade:</strong> {productData.nutrition_grades || "Not available"}</p>
-              <p><strong>NOVA Score:</strong> {productData.nova_group} - {getNovaDescription(productData.nova_group)}</p>
-              {/* Adding a section that pulls in the product image if available */}
-              
-              {/* Displaying Risks for Found Ingredients */}
-              <div>
-              {foundIngredients.length > 0 ? (
-                foundIngredients.map((ingredient, index) => (
-                  <div key={index}>
-                    <p><strong>{ingredient.example}</strong> ({ingredient.category})</p>
-                    <p>{ingredient.description}</p>
-                    <p>{ingredient.risks}</p>
-                  </div>
-                ))
-              ) : (
-                <p>No at-risk ingredients found.</p>
-              )}
-            </div>
-            {productData.image_url && <img src={productData.image_url} alt={productData.product_name} className="mt-2 w-40" />}
-            </div>
-            
-          ) : errorMessage ? (
-            <p className="text-red-500">{errorMessage}</p>
-          ) : (
-            <p>No product scanned yet.</p>
-          )}
-
-        </div>
+        <ProductDetails
+          productData={productData}
+          foundIngredients={foundIngredients}
+          errorMessage={errorMessage}
+          getNovaDescription={getNovaDescription}
+          />
       )}
 
-      {/* Manual Barcode Entry Option */}
-      <div className="mt-4 w-full max-w-md p-4 bg-white rounded-lg shadow-lg">
-        <p className="text-lg font-bold text-center">Enter Barcode Manually</p>
-        <input
-          type="text"
-          value={manualBarcode}
-          onChange={(e) => setManualBarcode(e.target.value)}
-          placeholder="Enter barcode..."
-          className="mt-2 w-full p-2 border border-gray-300 rounded-md"
-        />
-        <button
-          onClick={handleManualBarcodeCheck}
-          className="mt-2 w-full px-4 py-2 bg-green-600 text-white font-bold rounded-lg shadow hover:bg-green-700"
-        >
-          Check Product
-        </button>
-      </div>
-
-
-      {/* Rescan Button  - updated to use the handleRescan function, which resets scanner without reloading page */}
-      {!isScanning && (
-        <button
-          onClick={handleRescan}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700"
-        >
-          Scan Again
-        </button>
-      )}
+    <BarcodeControls
+        manualBarcode={manualBarcode}
+        setManualBarcode={setManualBarcode}
+        handleManualBarcodeCheck={handleManualBarcodeCheck}
+        handleRescan={handleRescan}
+        isScanning={isScanning}/>
     </div>
   );
 }
