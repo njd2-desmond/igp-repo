@@ -116,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",  # 🆕 Allows requests from your Next.js app
+    "http://localhost:3001",  # Allows requests from your Next.js app
     "http://localhost:3000",
 ]
 
