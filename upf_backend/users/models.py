@@ -8,15 +8,14 @@ class User(models.Model):
     user_dob = models.DateField()
     user_email = models.EmailField(unique = True)
     user_consent = models.BooleanField()
-    user_first_name = models.CharField(max_length=255)
-    user_last_name = models.CharField(max_length=255)
+    user_user_name = models.CharField(255)
 
     class Meta:
         db_table = 'users'
         managed = False
     
     def __str__(self):
-        return f"{self.user_first_name} {self.user_last_name}"
+        return f"{self.user_user_name}"
 
 class Survey(models.Model):
     survey_id = models.AutoField(primary_key=True)
