@@ -11,7 +11,8 @@ export function searchIngredients(inputStr) {
                     example: example,
                     category: item.category,
                     description: item.description,
-                    risks: item.risks
+                    risks: item.risks,
+                    source: item.source
                 }); // add to found set
                 console.log("Found ingredients:", example)
             }

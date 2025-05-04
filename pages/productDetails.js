@@ -12,12 +12,13 @@ export default function ProductDetails({productData, foundIngredients, errorMess
                 
                 {/* Displaying Risks for Found Ingredients */}
                 <div>
+                    <p><strong>At-Risk Ingredients</strong></p>
                 {foundIngredients.length > 0 ? (
                 foundIngredients.map((ingredient, index) => (
                     <div key={index}>
                     <p><strong>{ingredient.example}</strong> ({ingredient.category})</p>
-                    <p>{ingredient.description}</p>
                     <p>{ingredient.risks}</p>
+                    <p>({ingredient.source})</p>
                     </div>
       ))
     ) : (

@@ -13,6 +13,7 @@ Ketchup 50457243 (Nova 3)
 Harissa Paste 5010338301316 (Nova 4)
 Steak Mince 0000027536223
 Honey 5011273044757
+Huel Drink 5060495118067
 
 
 -- NOTE {} Denotes a code chunk
