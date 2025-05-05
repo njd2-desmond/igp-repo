@@ -1,9 +1,31 @@
+# Updated by Alice 2/5/2025 - key files added and comments on why! especially .env - learning takeaway - always add API keys in a .env file and never track .env files or .env.local files
+# ^ As this poses a security risk, see below why
+# Python -
+#  the below 2 were added to gitignore since .pyc files are python compiled files that are encoded in bytecode form for faster re-use
+# ^ and live in __pycache__/ folders - they are auto-generated, machine-dependent, not human readable, and they change every time you run code, so there is
+# ^ no point tracking them in git! :)
+*.pyc
+__pycache__/
+
+# Node/React Frontend:
 node_modules/
 .next/
 .env.local
 *.log
 node_modules/package-lock.json
+package-lock.json
+
+# macOS system junk
 .DS_Store
-upf_backend/db.sqlite3
+
+# Python backend
 venv/
+
+# Django stuff
+upf_backend/db.sqlite3
 upf_backend/chatbot/.env
+
+# General env files - .env was not added before which poses a security risk - bots will scan through github for .env files 
+# Best practice in group projects: EACH DEVELOPER SHOULD USE THEIR OWN API KEY ESPECIALLY if there are usage limits, quotas, or billing risks
+.env 
+.env.local

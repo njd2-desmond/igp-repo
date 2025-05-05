@@ -21,4 +21,5 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api/', include('foodlookup.urls')),  # Now it connects to foodlookup!
+    path('accounts/', include('accounts.urls')),
 ]

@@ -37,7 +37,7 @@ def check_food(barcode: str):
         raise HTTPException(status_code=404, detail="Food not found")
     return {"product_name": food_data.get("product_name", "Unknown")}
 
-@app.post("/chatbot/")
+@app.post("/chatbot/") # this is the chatbot Endpoint
 def chatbot(user_query: dict = Body(...)):
     """Chatbot endpoint using Gemini AI"""
     try:

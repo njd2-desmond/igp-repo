@@ -16,13 +16,30 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+##### <added by Alice>:
+import os
+import environ
+
+# why? -- we need to move things like secret key and database passwords out of this page - the below snippet basically creates the env object, calls the environ.Env() function
+# to create an instance named env - this object is the interface for reading variables from .env.
+
+env = environ.Env(
+    DEBUG=(bool, False) # treat DEBUG as a boolean and use False as the fallback if it's missing. It looks for DEBUG= in .env, convert it to a proper Python boolean, and assign it.
+)
+
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+##### </added by Alice>
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4!3n0@)0u32ag-z(jiv!-!vw5wg2yon!n1_@#q1)wzxok#ce_!"
+# Alice comment: removed secret key below to point to local env file (each group member will need to create this on their systems to run the project)
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Alice comment: changed from DEBUG = True to DEBUG = env('DEBUG')
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -44,8 +61,10 @@ INSTALLED_APPS = [
     "foodlookup",  # Our barcode lookup app
     "users", # added new app; users; to keep track of users
     "chatbot", # Added the chatbot app for integration into Django & FastAPI
+    "accounts" # For Django User Accounts
 ]
 
+AUTH_USER_MODEL = 'users.CustomUser' # new - this tells Django to use CustomUser from the users app instead of the default User model
 
 
 MIDDLEWARE = [
@@ -87,8 +106,12 @@ WSGI_APPLICATION = "upf_backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD' : env('DB_PASSWORD'),
+        'HOST' : env('DB_HOST'),
+        'PORT' : env('DB_PORT'),
     }
 }
 
@@ -112,7 +135,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",  # 🆕 Allows requests from your Next.js app
+    "http://localhost:3001",  # Allows requests from your Next.js app
     "http://localhost:3000",
 ]
 

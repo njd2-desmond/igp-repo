@@ -145,7 +145,7 @@ export default function Home() {
               <p><strong>Brand:</strong> {productData.brands || "Unknown"}</p>
               <p><strong>Ingredients:</strong> {productData.ingredients_text || "Not available"}</p>
               <p><strong>Nutrition Grade:</strong> {productData.nutrition_grades || "Not available"}</p>
-              <p><strong>NOVA Score:</strong> {productData.nova_group} - {getNovaDescription(productData.nova_group)}</p>  {/* ✅ Add NOVA score */}
+              <p><strong>NOVA Score:</strong> {productData.nova_group} - {getNovaDescription(productData.nova_group)}</p>  {/* Add NOVA score */}
               {/* Adding a section that pulls in the product image if available */}
               {productData.image_url && <img src={productData.image_url} alt={productData.product_name} className="mt-2 w-40" />}
             </div>
