@@ -32,7 +32,7 @@ export default function Home() {
         setProductData(data.product);
         setErrorMessage(null); // Reset any previous error messages
       } else {
-        setErrorMessage("⚠️ Product not found in database.");
+        setErrorMessage("Product not found in database.");
 
         // New: Restarts the scanner automatically if the product isn't found so there is no need to press rescan
         setTimeout(() => setIsScanning(true), 1000);
@@ -40,7 +40,7 @@ export default function Home() {
     } catch (error) {
       console.error("Error fetching product data:", error);
       setProductData(null);
-      setErrorMessage("⚠️ Network error. Please try again.");
+      setErrorMessage("Network error. Please try again.");
 
       // Restart scanner if network error
       setTimeout(() => Quagga.start(), 500);
@@ -86,7 +86,7 @@ export default function Home() {
           // Prevent duplicate scans by disabling detection temporarily
           Quagga.stop(); // stop scanner when product is detected
         } else {
-          console.warn("⚠️ Unsupported barcode length:", barcode.length);
+          console.warn("Unsupported barcode length:", barcode.length);
         }
       });
 
