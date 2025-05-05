@@ -1,21 +1,16 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
 
 # Create your models here.
 
-class User(models.Model):
-    user_id = models.AutoField(primary_key = True)
-    user_dob = models.DateField()
-    user_email = models.EmailField(unique = True)
-    user_consent = models.BooleanField()
-    user_user_name = models.CharField(255)
+class CustomUser(AbstractUser):
+    dob = models.DateField(null = True, blank = True)
+    consent = models.BooleanField(default = False)
 
-    class Meta:
-        db_table = 'users'
-        managed = False
-    
     def __str__(self):
-        return f"{self.user_user_name}"
+        return self.username
 
 class Survey(models.Model):
     survey_id = models.AutoField(primary_key=True)
@@ -55,7 +50,7 @@ class Survey(models.Model):
             ('Get personalised food recommendations based on my diet', 'Get personalised food recommendations based on my diet')
         ]
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'survey'
