@@ -7,6 +7,14 @@
 - Jordan Edgecombe
 - Collins Madubuchi
 
+Test Barcodes
+Whole Milk 5000436338840 (Nova 1)
+Ketchup 50457243 (Nova 3)
+Harissa Paste 5010338301316 (Nova 4)
+Steak Mince 0000027536223
+Honey 5011273044757
+Huel Drink 5060495118067
+
 
 -- NOTE {} Denotes a code chunk
 
@@ -29,7 +37,7 @@ The users app handles everything related to user management, including: User reg
 Chatbot development IMPORTANT NOTE:
 API KEYS SHOULD NOT BE HARCODED INTO PUBLICLY DEPLOYED CODE
 -- API keys should be retrieved by load_dotenv and os.getenv
--- API keys should be added to env files (there is one in the chatbot folder) - env files do not get added to git, since they are added to the .gitignore file -- inside main project folder 18/03/25 (see this line; .env.local)
+-- API keys should be added to env files (there is one in the chatbot folder in older branches and in the newest branch the .env file is in the root upf_backend folder) - env files should not get added to git, since they are added to the .gitignore file -- inside main project folder 18/03/25 (see this line; .env.local)
 -- Alice update 2/5/2025 - .env file now moved into root upf_backend folder
 
 to run postgresql: (ADD NON MAC VERSION)
@@ -70,4 +78,6 @@ python manage.py migrate
 ^ This will create the users table and set up all Django auth tables insode upf_unwrapped PostgreSQL database
 
 NOTE: SPACES AROUND = ARE NOT ALLOWED IN .env FILES
+
+
 
